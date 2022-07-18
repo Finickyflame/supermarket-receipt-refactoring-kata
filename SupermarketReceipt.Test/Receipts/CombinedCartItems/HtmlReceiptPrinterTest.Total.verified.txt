@@ -1,0 +1,14 @@
+﻿<div class="item">
+   <div class="label">toothbrush</div>
+   <div class="amount">1.98</div>
+   <div class="detail">0.99 * 2</div>
+</div>
+<div class="item">
+   <div class="label">apples</div>
+   <div class="amount">1.49</div>
+   <div class="detail">1.99 * 0.750</div>
+</div>
+<div class="total">
+   <div class="label">Total:</div>
+   <div class="amount">3.47</div>
+</div>

@@ -1,0 +1,8 @@
+﻿<div class="item">
+   <div class="label">toothbrush</div>
+   <div class="amount">0.99</div>
+</div>
+<div class="total">
+   <div class="label">Total:</div>
+   <div class="amount">0.99</div>
+</div>

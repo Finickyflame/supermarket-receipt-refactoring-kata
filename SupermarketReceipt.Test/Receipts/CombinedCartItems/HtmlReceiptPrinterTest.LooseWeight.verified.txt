@@ -1,0 +1,9 @@
+﻿<div class="item">
+   <div class="label">apples</div>
+   <div class="amount">5.97</div>
+   <div class="detail">1.99 * 3.000</div>
+</div>
+<div class="total">
+   <div class="label">Total:</div>
+   <div class="amount">5.97</div>
+</div>

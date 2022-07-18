@@ -1,147 +1,178 @@
-
 using System.Threading.Tasks;
 using VerifyXunit;
 using Xunit;
 
-namespace SupermarketReceipt.Test
+namespace SupermarketReceipt.Test;
+
+[UsesVerify]
+public class SupermarketTest
 {
-    [UsesVerify]
-    public class SupermarketTest
+    private readonly ISupermarketCatalog _catalog;
+    private readonly Teller _teller;
+    private readonly ShoppingCart _shoppingCart;
+    private readonly Product _toothbrush;
+    private readonly Product _toothpaste;
+    private readonly Product _rice;
+    private readonly WeightProduct _apples;
+    private readonly Product _cherryTomatoes;
+    private readonly IReceiptPrinter _receiptPrinter;
+
+    public SupermarketTest()
     {
-        private SupermarketCatalog _catalog;
-        private Teller _teller;
-        private ShoppingCart _theCart;
-        private Product _toothbrush;
-        private Product _rice;
-        private Product _apples;
-        private Product _cherryTomatoes;
-        
-        public SupermarketTest()
-        {
-            _catalog = new FakeCatalog();
-            _teller = new Teller(_catalog);
-            _theCart = new ShoppingCart();
+        this._catalog = new FakeCatalog();
+        this._teller = new Teller(this._catalog);
+        this._shoppingCart = new ShoppingCart();
+        this._receiptPrinter = new TextReceiptPrinter();
 
-            _toothbrush = new Product("toothbrush", ProductUnit.Each);
-            _catalog.AddProduct(_toothbrush, 0.99);
-            _rice = new Product("rice", ProductUnit.Each);
-            _catalog.AddProduct(_rice, 2.99);
-            _apples = new Product("apples", ProductUnit.Kilo);
-            _catalog.AddProduct(_apples, 1.99);
-            _cherryTomatoes = new Product("cherry tomato box", ProductUnit.Each);
-            _catalog.AddProduct(_cherryTomatoes, 0.69);
+        this._toothbrush = new Product("toothbrush", 0.99);
+        this._catalog.AddProduct(this._toothbrush);
+        this._toothpaste = new Product("toothpaste", 1.79);
+        this._catalog.AddProduct(this._toothpaste);
+        this._rice = new Product("rice", 2.99);
+        this._catalog.AddProduct(this._rice);
+        this._apples = new WeightProduct("apples", 1.99);
+        this._catalog.AddProduct(this._apples);
+        this._cherryTomatoes = new Product("cherry tomato box", 0.69);
+        this._catalog.AddProduct(this._cherryTomatoes);
+    }
 
-        }
-        
-        [Fact]
-        public Task an_empty_shopping_cart_should_cost_nothing()
-        {
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task an_empty_shopping_cart_should_cost_nothing()
+    {
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task one_normal_item()
-        {
-            _theCart.AddItem(_toothbrush);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task one_normal_item()
+    {
+        this._shoppingCart.AddItem(this._toothbrush);
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task two_normal_items()
-        {
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_rice);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task two_normal_items()
+    {
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._rice);
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task buy_two_get_one_free()
-        {
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _teller.AddSpecialOffer(SpecialOfferType.ThreeForTwo, _toothbrush, _catalog.GetUnitPrice(_toothbrush));
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task buy_two_get_one_free()
+    {
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._catalog.AddSpecialOffer(new ThreeForTwoOffer(this._toothbrush));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task buy_five_get_one_free()
-        {
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _theCart.AddItem(_toothbrush);
-            _teller.AddSpecialOffer(SpecialOfferType.ThreeForTwo, _toothbrush, _catalog.GetUnitPrice(_toothbrush));
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task buy_five_get_one_free()
+    {
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._shoppingCart.AddItem(this._toothbrush);
+        this._catalog.AddSpecialOffer(new ThreeForTwoOffer(this._toothbrush));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task loose_weight_product()
-        {
-            _theCart.AddItemQuantity(_apples, .5);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task loose_weight_product()
+    {
+        this._shoppingCart.AddItem(this._apples, .5);
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task percent_discount()
-        {
-            _theCart.AddItem(_rice);
-            _teller.AddSpecialOffer(SpecialOfferType.TenPercentDiscount, _rice, 10.0);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task percent_discount()
+    {
+        this._shoppingCart.AddItem(this._rice);
+        this._catalog.AddSpecialOffer(new TenPercentDiscount(this._rice));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task xForY_discount()
-        {
-            _theCart.AddItem(_cherryTomatoes);
-            _theCart.AddItem(_cherryTomatoes);
-            _teller.AddSpecialOffer(SpecialOfferType.TwoForAmount, _cherryTomatoes, .99);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task xForY_discount()
+    {
+        this._shoppingCart.AddItem(this._cherryTomatoes);
+        this._shoppingCart.AddItem(this._cherryTomatoes);
+        this._catalog.AddSpecialOffer(new TwoForAmountOffer(this._cherryTomatoes, .99));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task FiveForY_discount()
-        {
-            _theCart.AddItemQuantity(_apples, 5);
-            _teller.AddSpecialOffer(SpecialOfferType.FiveForAmount, _apples, 6.99);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task FiveForY_discount()
+    {
+        this._shoppingCart.AddItem(this._apples, 5);
+        this._catalog.AddSpecialOffer(new FiveForAmountOffer(this._apples, 6.99));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task FiveForY_discount_withSix()
-        {
-            _theCart.AddItemQuantity(_apples, 6);
-            _teller.AddSpecialOffer(SpecialOfferType.FiveForAmount, _apples, 6.99);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task FiveForY_discount_withSix()
+    {
+        this._shoppingCart.AddItem(this._apples, 6);
+        this._catalog.AddSpecialOffer(new FiveForAmountOffer(this._apples, 6.99));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task FiveForY_discount_withSixteen()
-        {
-            _theCart.AddItemQuantity(_apples, 16);
-            _teller.AddSpecialOffer(SpecialOfferType.FiveForAmount, _apples, 6.99);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task FiveForY_discount_withSixteen()
+    {
+        this._shoppingCart.AddItem(this._apples, 16);
+        this._catalog.AddSpecialOffer(new FiveForAmountOffer(this._apples, 6.99));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
 
-        [Fact]
-        public Task FiveForY_discount_withFour()
-        {
-            _theCart.AddItemQuantity(_apples, 4);
-            _teller.AddSpecialOffer(SpecialOfferType.FiveForAmount, _apples, 6.99);
-            Receipt receipt = _teller.ChecksOutArticlesFrom(_theCart);
-            return Verifier.Verify(new ReceiptPrinter(40).PrintReceipt(receipt));
-        }
+    [Fact]
+    public Task FiveForY_discount_withFour()
+    {
+        this._shoppingCart.AddItem(this._apples, 4);
+        this._catalog.AddSpecialOffer(new FiveForAmountOffer(this._apples, 6.99));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
+
+    [Fact]
+    public Task Bundle_No_Discount()
+    {
+        this._shoppingCart.AddItem(this._toothbrush, 2);
+        this._catalog.AddSpecialOffer(new TenPercentBundleDiscount(this._toothbrush, this._toothpaste));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
+
+    [Fact]
+    public Task Bundle_One_Discount()
+    {
+        this._shoppingCart.AddItem(this._toothbrush, 2);
+        this._shoppingCart.AddItem(this._toothpaste);
+        this._catalog.AddSpecialOffer(new TenPercentBundleDiscount(this._toothbrush, this._toothpaste));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
+    }
+
+    [Fact]
+    public Task Bundle_Two_Discounts()
+    {
+        this._shoppingCart.AddItem(this._toothbrush, 2);
+        this._shoppingCart.AddItem(this._toothpaste, 2);
+        this._catalog.AddSpecialOffer(new TenPercentBundleDiscount(this._toothbrush, this._toothpaste));
+        Receipt receipt = this._teller.ChecksOutArticlesFrom(this._shoppingCart);
+        return Verifier.Verify(this._receiptPrinter.PrintReceipt(receipt));
     }
 }

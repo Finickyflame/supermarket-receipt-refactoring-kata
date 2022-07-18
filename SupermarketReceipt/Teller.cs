@@ -1,38 +1,55 @@
-using System.Collections.Generic;
+namespace SupermarketReceipt;
 
-namespace SupermarketReceipt
+public class Teller
 {
-    public class Teller
+    private readonly ISupermarketCatalog _catalog;
+
+    public Teller(ISupermarketCatalog catalog)
     {
-        private readonly SupermarketCatalog _catalog;
-        private readonly Dictionary<Product, Offer> _offers = new Dictionary<Product, Offer>();
+        this._catalog = catalog;
+    }
 
-        public Teller(SupermarketCatalog catalog)
+    public Receipt ChecksOutArticlesFrom(ShoppingCart cart)
+    {
+        var transaction = new Transaction();
+        foreach (ICartItem item in cart.Items)
         {
-            _catalog = catalog;
+            transaction.Add(item);
+        }
+        transaction.ApplyOffers(this._catalog.Offers);
+        return transaction.CreateReceipt();
+    }
+
+
+    private sealed class Transaction : ICartItemHandler
+    {
+        private readonly Receipt _receipt = new();
+        private readonly List<ICartItem> _items = new();
+
+        public void Add(ICartItem item)
+        {
+            this._items.Add(item);
+            item.Accept(this);
         }
 
-        public void AddSpecialOffer(SpecialOfferType offerType, Product product, double argument)
+        public void Handle(CartItem item)
         {
-            _offers[product] = new Offer(offerType, product, argument);
+            this._receipt.AddProduct(item.Product, item.Quantity);
         }
 
-        public Receipt ChecksOutArticlesFrom(ShoppingCart theCart)
+        public void Handle(WeightCartItem item)
         {
-            var receipt = new Receipt();
-            var productQuantities = theCart.GetItems();
-            foreach (var pq in productQuantities)
+            this._receipt.AddProduct(item.Product, item.Weight);
+        }
+
+        public Receipt CreateReceipt() => this._receipt;
+
+        public void ApplyOffers(IEnumerable<IOffer> offers)
+        {
+            foreach (Discount discount in offers.SelectMany(offer => offer.GetDiscounts(this._items)))
             {
-                var p = pq.Product;
-                var quantity = pq.Quantity;
-                var unitPrice = _catalog.GetUnitPrice(p);
-                var price = quantity * unitPrice;
-                receipt.AddProduct(p, quantity, unitPrice, price);
+                this._receipt.AddDiscount(discount);
             }
-
-            theCart.HandleOffers(receipt, _offers, _catalog);
-
-            return receipt;
         }
     }
 }

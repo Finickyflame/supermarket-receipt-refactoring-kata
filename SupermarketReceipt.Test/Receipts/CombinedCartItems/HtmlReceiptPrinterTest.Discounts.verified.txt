@@ -1,0 +1,8 @@
+﻿<div class="discount">
+   <div class="label">3 for 2(apples)</div>
+   <div class="amount">-0.99</div>
+</div>
+<div class="total">
+   <div class="label">Total:</div>
+   <div class="amount">-0.99</div>
+</div>

@@ -21,4 +21,71 @@
     <ProjectReference Include="..\SupermarketReceipt\SupermarketReceipt.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.Discounts.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.LooseWeight.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.OneLineItem.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.PrintWholeReceipt.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.QuantityTwo.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\CombinedEntriesTextPrinter\ReceiptPrinterTest.Total.verified.txt">
+      <ParentFile>ReceiptPrinterTest</ParentFile>
+      <DependentUpon>ReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.Total.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.QuantityTwo.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.PrintWholeReceipt.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.OneLineItem.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.LooseWeight.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="Receipts\HtmlReceiptPrinterTest.Discounts.verified.txt">
+      <ParentFile>TextReceiptPrinterTest</ParentFile>
+      <DependentUpon>TextReceiptPrinterTest.cs</DependentUpon>
+    </None>
+    <None Update="SupermarketTest.Bundle_One_Discount.verified.txt">
+      <ParentFile>SupermarketTest</ParentFile>
+      <DependentUpon>SupermarketTest.cs</DependentUpon>
+    </None>
+    <None Update="SupermarketTest.Bundle_No_Discount.verified.txt">
+      <ParentFile>SupermarketTest</ParentFile>
+      <DependentUpon>SupermarketTest.cs</DependentUpon>
+    </None>
+    <None Update="SupermarketTest.Bundle_Two_Discounts.verified.txt">
+      <ParentFile>SupermarketTest</ParentFile>
+      <DependentUpon>SupermarketTest.cs</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Receipts\SingleCartItems" />
+  </ItemGroup>
+
 </Project>
